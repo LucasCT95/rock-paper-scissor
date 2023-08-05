@@ -1,3 +1,5 @@
+// GAME FUNCTION
+
 function getRandomInt(max) {
     return Math.floor(Math.random() * max);
 }
@@ -13,13 +15,6 @@ function getComputerChoice() {
         default:
             return "This in not in the game !"
     }
-}
-
-function capitalizeFirstLetter(string) {
-    if(string==null){
-        throw "You must choose rock, paper or scissor"
-    }
-    return string.charAt(0).toUpperCase() + string.toLowerCase().slice(1);
 }
 
 function playRound(playerSelection, computerSelection) {
@@ -48,49 +43,83 @@ function playRound(playerSelection, computerSelection) {
     }
 }
 
-function game(){
-    let resultMessageList= [];
-
-    for (let index = 0; index <= 4; index++) {
-        const playerSelection = capitalizeFirstLetter(prompt("Rock, paper or scissor?"));
-        validateInput(playerSelection)
-        const computerSelection = getComputerChoice();
-        const resultMessage = playRound(playerSelection, computerSelection)
-        console.log(resultMessage);
-        resultMessageList.push(resultMessage)
+// DOM MANIPULATION
+function updateScore(msg){
+    if (msg.includes("win")){
+        youWin++
+    } else if (msg.includes("lose")){
+        pcWin++
     }
-
-    console.log(getWinner(resultMessageList));
+    playerScore.textContent = "You win: "+ youWin.toString() +" times"
+    pcScore.textContent = "PC win: "+ pcWin.toString() +" times"
 }
 
-function validateInput(string){
-    if(string !='Rock' && string !='Paper' && string !='Scissor'){
-        throw "Invalid Input !"
+function finishGame(){
+    const scores = document.querySelector('#scores')
+    const finalResult = document.createElement('p')
+    scores.appendChild(finalResult)
+    
+    if (youWin == 5){
+        finalResult.textContent = "You win!";
+        rockBtn.disabled =true;
+        paperBtn.disabled =true;
+        scissorBtn.disabled = true;
+        resetBtn.style = "";
+    }
+    
+    if(pcWin == 5){
+        finalResult.textContent = "Pc win!";
+        rockBtn.disabled =true;
+        paperBtn.disabled =true;
+        scissorBtn.disabled = true;
+        resetBtn.style = "";
     }
 }
 
-function getWinner(resultMessageList){
-    let youWin = 0;
-    let pcWin = 0;
-    resultMessageList.forEach(msg => {
-        if (msg.includes("win")){
-            youWin++
-        } else if (msg.includes("lose")){
-            pcWin++
-        }
-    });
+var youWin = 0;
+var pcWin = 0;
 
-    if (youWin>pcWin){
-       return "You win!"
-    } else if(youWin<pcWin){
-        return "Pc win!"
-    } else {
-        return "Game ended in a Tie"
-    }
+const playerScore = document.querySelector('#playerScore')
+const pcScore = document.querySelector('#pcScore')
 
-}
-game();
-// When getting input from user validate it (is "Rock, "Paper" or "Scissor")
+const roundResult = document.querySelector('#round-result')
+const pRoundResult = document.createElement('p')
+roundResult.appendChild(pRoundResult)
 
-//COMMIT before anything !!!
-//Take a time to see git and may put all odin projects in one single folder
+const rockBtn = document.querySelector('#rock-btn');
+rockBtn.addEventListener('click', e => {
+    computerSelection = getComputerChoice();
+    resultMessage = playRound(e.target.innerHTML, computerSelection)
+    pRoundResult.textContent = resultMessage
+
+    updateScore(resultMessage)
+    finishGame()
+
+})
+
+const paperBtn = document.querySelector('#paper-btn');
+paperBtn.addEventListener('click', e => {
+    computerSelection = getComputerChoice();
+    resultMessage = playRound(e.target.innerHTML, computerSelection)
+    pRoundResult.textContent = resultMessage
+
+    updateScore(resultMessage)
+    finishGame()
+
+})
+
+const scissorBtn = document.querySelector('#scissor-btn');
+scissorBtn.addEventListener('click', e => {
+    computerSelection = getComputerChoice();
+    resultMessage = playRound(e.target.innerHTML, computerSelection)
+    pRoundResult.textContent = resultMessage
+
+    updateScore(resultMessage)
+    finishGame()
+
+})
+
+const resetBtn = document.querySelector('#reset-btn')
+resetBtn.addEventListener('click', ()=>{
+    location.reload();
+})
